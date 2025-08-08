@@ -1,7 +1,19 @@
-use colored::*;
-use reqwest::{Method, Response};
-use serde_json::{Value, json};
+use once_cell::sync::Lazy;
+use reqwest::{Client, Method, Response, header};
+use serde_json::Value;
 use std::collections::HashMap;
+use std::time::Duration;
+
+static CLIENT: Lazy<Client> = Lazy::new(|| {
+    Client::builder()
+        .timeout(Duration::from_secs(5))
+        .tcp_keepalive(Duration::from_secs(30))
+        .pool_idle_timeout(Duration::from_secs(60))
+        .gzip(true)
+        .brotli(true)
+        .build()
+        .expect("Failed to create HTTP client")
+});
 
 pub async fn execute_request(
     method: Method,
@@ -9,11 +21,19 @@ pub async fn execute_request(
     body: Option<Value>,
     headers: HashMap<String, String>,
 ) -> Result<Response, Box<dyn std::error::Error>> {
-    let client = reqwest::Client::new();
-    let mut request = client.request(method, url);
+    let mut request = CLIENT.request(method, url);
 
-    for (key, value) in headers {
-        request = request.header(key, value);
+    if !headers.is_empty() {
+        let mut header_map = header::HeaderMap::with_capacity(headers.len());
+        for (k, v) in headers {
+            if let (Ok(name), Ok(value)) = (
+                header::HeaderName::from_bytes(k.as_bytes()),
+                header::HeaderValue::from_str(&v),
+            ) {
+                header_map.insert(name, value);
+            }
+        }
+        request = request.headers(header_map);
     }
 
     if let Some(body) = body {
@@ -22,27 +42,4 @@ pub async fn execute_request(
 
     let response = request.send().await?;
     Ok(response)
-}
-
-pub async fn print_response(response: Response) -> Result<(), Box<dyn std::error::Error>> {
-    println!(
-        "{} {}",
-        "Status:".bold(),
-        response.status().to_string().blue()
-    );
-
-    println!("{}", "Headers:".bold());
-    for (key, value) in response.headers() {
-        println!(
-            "  {}: {}",
-            key.to_string().green(),
-            value.to_str()?.yellow()
-        );
-    }
-
-    println!("{}", "Body:".bold());
-    let text = response.text().await?;
-    println!("{}", text);
-
-    Ok(())
 }
