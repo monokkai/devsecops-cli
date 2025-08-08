@@ -1,5 +1,5 @@
 use colored::Colorize;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use std::env;
 use std::process::Command;
 
