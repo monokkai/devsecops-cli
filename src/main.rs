@@ -13,5 +13,6 @@ fn main() {
         Commands::Scan(args) => commands::scan::handle(args),
         Commands::Docker(args) => commands::docker::handle(args),
         Commands::Auth(args) => commands::auth::handle(args),
+        Commands::Log(args) => commands::log::handle(&args), 
     }
 }

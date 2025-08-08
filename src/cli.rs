@@ -18,6 +18,8 @@ pub enum Commands {
     Docker(DockerArgs),
     /// Authentication
     Auth(AuthArgs),
+    /// Git Logs
+    Log(LogArgs),
 }
 
 #[derive(Parser)]
@@ -48,6 +50,21 @@ pub struct ScanArgs {
 pub struct DockerArgs {
     #[command(subcommand)]
     pub action: DockerAction,
+}
+
+#[derive(Parser)]
+pub struct LogArgs {
+    /// Show compact log
+    #[arg(short, long, default_value_t = false)]
+    pub compact: bool,
+
+    /// Limit number of commits
+    #[arg(short, long)]
+    pub limit: Option<usize>,
+
+    /// Show graph view
+    #[arg(short, long, default_value_t = false)]
+    pub graph: bool,
 }
 
 #[derive(Subcommand)]
