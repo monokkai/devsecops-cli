@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y \
     trivy \
     && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["devsecops-cli"]
+ENTRYPOINT ["monokkai"]
