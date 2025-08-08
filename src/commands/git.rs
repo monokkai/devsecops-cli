@@ -13,6 +13,7 @@ fn is_commit_successful(output: &Output) -> bool {
 }
 
 pub fn handle(args: GitArgs) {
+    // Git add
     if args.add {
         match execute_git_command(&["add", "."]) {
             Ok(output) if output.status.success() => {
@@ -29,6 +30,7 @@ pub fn handle(args: GitArgs) {
         }
     }
 
+    // Git commit
     let commit_output = execute_git_command(&["commit", "-m", &args.message]);
     match commit_output {
         Ok(output) if is_commit_successful(&output) => {
@@ -58,17 +60,28 @@ pub fn handle(args: GitArgs) {
         }
     }
 
+    // Git push
     if args.push {
         match execute_git_command(&["push"]) {
             Ok(output) if output.status.success() => {
                 println!("{}", "✅ Pushed successfully".green());
             }
             Ok(output) => {
-                eprintln!(
-                    "{} {}",
-                    "❌ Git push failed:".red(),
-                    String::from_utf8_lossy(&output.stderr).trim().red()
-                );
+                let error_msg = String::from_utf8_lossy(&output.stderr);
+
+                if error_msg.contains("Updates were rejected") {
+                    println!(
+                        "{} {}",
+                        "⚠️".yellow(),
+                        "Push rejected - remote has new changes".yellow()
+                    );
+                    println!("{} Try running:", "💡".blue());
+                    println!("  git pull --rebase");
+                    println!("Then push again with:");
+                    println!("  monokkai git -a -m \"your message\" -p");
+                } else {
+                    eprintln!("{} {}", "❌ Git push failed:".red(), error_msg.trim().red());
+                }
                 return;
             }
             Err(e) => {
@@ -78,5 +91,5 @@ pub fn handle(args: GitArgs) {
         }
     }
 
-    println!("{}", "✅ Git operation completed successfully".green());
+    println!("{}", "🎉 All operations completed successfully".green());
 }
