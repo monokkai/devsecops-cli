@@ -35,7 +35,7 @@ pub fn handle(args: &crate::cli::LogArgs) {
     );
     println!(
         "{}",
-        "│                   COMMIT HISTORY                    │"
+        "│                   COMMIT HISTORY                      │"
             .bright_blue()
             .bold()
     );
