@@ -1,20 +1,21 @@
-use colored::*;
+use colored::Colorize;
 use dotenv::dotenv;
 use std::env;
 use std::process::Command;
 
-pub async fn handle(args: super::cli::DockerArgs) {
+use crate::cli::{DockerAction, DockerArgs};
+
+pub fn handle(args: DockerArgs) {
     dotenv().ok();
-    let dockerhub_user = env::var("DOCKERHUB_USER").expect("Set DOCKERHUB_USER in .env");
+    let dockerhub_user = env::var("DOCKERHUB_USER").expect("DOCKERHUB_USER not set in .env");
 
     match args.action {
         DockerAction::Scan { image } => {
-            println!("🔍 Scanning Docker image {}...", image.blue());
+            println!("{} {}", "🔍 Scanning image:".blue(), image.green());
             let status = Command::new("trivy")
-                .arg("image")
-                .arg(&image)
+                .args(["image", &image])
                 .status()
-                .expect("Failed to run trivy");
+                .expect("Failed to execute trivy");
 
             if !status.success() {
                 eprintln!("{}", "❌ Scan failed".red());
@@ -22,31 +23,23 @@ pub async fn handle(args: super::cli::DockerArgs) {
         }
         DockerAction::Push { image, tag } => {
             let tag = tag.unwrap_or_else(|| "latest".to_string());
-            let target_image = format!("{}/{}:{}", dockerhub_user, image, tag);
+            let target = format!("{}/{}:{}", dockerhub_user, image, tag);
 
-            println!("🚀 Pushing {} to DockerHub...", target_image.green());
+            println!("{} {}", "🚀 Pushing:".blue(), target.green());
 
-            // Push
             let build_status = Command::new("docker")
-                .args(["build", "-t", &target_image, "."])
+                .args(["build", "-t", &target, "."])
                 .status()
                 .expect("Docker build failed");
 
-            if !build_status.success() {
-                eprintln!("{}", "❌ Build failed".red());
-                return;
-            }
-
-            let push_status = Command::new("docker")
-                .arg("push")
-                .arg(&target_image)
-                .status()
-                .expect("Docker push failed");
-
-            if push_status.success() {
-                println!("✅ Successfully pushed to DockerHub");
+            if build_status.success() {
+                Command::new("docker")
+                    .args(["push", &target])
+                    .status()
+                    .expect("Docker push failed");
+                println!("{}", "✅ Push successful".green());
             } else {
-                eprintln!("{}", "❌ Push failed".red());
+                eprintln!("{}", "❌ Build failed".red());
             }
         }
     }

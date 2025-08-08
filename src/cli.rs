@@ -2,43 +2,37 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "devsecops-cli")]
-#[command(
-    about = "DevSecOps CLI: аудит безопасности, упрощённый git и др.",
-    version
-)]
-pub struct Cli {
+#[command(about = "DevSecOps CLI Tool", version)]
+pub struct Args {
     #[command(subcommand)]
     pub command: Commands,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
-    // Git commands(easier than GitHub cli)
+    /// Git operations
     Git(GitArgs),
-
-    // Scan code
+    /// Security scanning
     Scan(ScanArgs),
-
-    // Audit
+    /// Docker operations
     Docker(DockerArgs),
-
-    // Jwt, OAuth, auth..
+    /// Authentication
     Auth(AuthArgs),
 }
 
 #[derive(Parser)]
 pub struct GitArgs {
     #[arg(short, long)]
-    message: String,
+    pub message: String,
 
-    #[arg(short, long, default_value = "false")]
-    push: bool,
+    #[arg(short, long, default_value_t = false)]
+    pub push: bool,
 }
 
 #[derive(Parser)]
 pub struct ScanArgs {
     #[arg(short, long)]
-    path: String,
+    pub path: String,
 }
 
 #[derive(Parser)]
@@ -49,14 +43,8 @@ pub struct DockerArgs {
 
 #[derive(Subcommand)]
 pub enum DockerAction {
-    Scan {
-        #[arg(short, long)]
-        image: String,
-    },
-    Audit {
-        #[arg(short, long, default_value = "false")]
-        verbose: bool,
-    },
+    Scan { image: String },
+    Push { image: String, tag: Option<String> },
 }
 
 #[derive(Parser)]
@@ -67,12 +55,6 @@ pub struct AuthArgs {
 
 #[derive(Subcommand)]
 pub enum AuthAction {
-    Jwt {
-        #[arg(short, long)]
-        token: String,
-    },
-    Oauth {
-        #[arg(short, long)]
-        token: String,
-    },
+    Jwt { token: String },
+    Github { token: String },
 }

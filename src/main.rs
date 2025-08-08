@@ -1,17 +1,19 @@
-use clap::Parser;
-use commands::{git, scan, docker, auth};
-
+mod cli;
 mod commands;
 mod utils;
-mod cli;
+
+use std::env::Args;
+use clap::Parser;
+
+use crate::cli::{Args, Commands};
 
 fn main() {
-    let args = cli::Args::parse();
+    let args = Args::parse();
 
     match args.command {
-        cli::Commands::Git(git_args) => git::handle(git_args),
-        cli::Commands::Scan(scan_args) => scan::handle(scan_args),
-        cli::Commands::Docker(docker_args) => docker::handle(docker_args),
-        cli::Commands::Auth(auth_args) => auth::handle(auth_args),
+        Commands::Git(args) => commands::git::handle(args),
+        Commands::Scan(args) => commands::scan::handle(args),
+        Commands::Docker(args) => commands::docker::handle(args),
+        Commands::Auth(args) => commands::auth::handle(args),
     }
 }

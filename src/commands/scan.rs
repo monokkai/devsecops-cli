@@ -1,20 +1,22 @@
-use colored::*;
-use reqwest;
+use colored::Colorize;
+use reqwest::blocking::get;
 
-pub fn handle(args: cli::ScanArgs) {
-    println!("🔍 Scanning {} on vulnerabilities...", args.path.green());
+use crate::cli::ScanArgs;
 
-    // API
+pub fn handle(args: ScanArgs) {
+    println!("{} {}", "🔍 Scanning:".blue(), args.path.green());
+
     let url = format!("https://api.github.com/advisories?path={}", args.path);
-    let response = reqwest::blocking::get(&url).unwrap();
-
-    if response.status().is_success() {
-        let advisories: Vec<serde_json::Value> = response.json().unwrap();
-        println!(
-            "Found vulnerabilities: {}",
-            advisories.len().to_string().red()
-        );
-    } else {
-        eprintln!("API Error: {}", response.status());
+    match get(&url) {
+        Ok(response) if response.status().is_success() => {
+            match response.json::<Vec<serde_json::Value>>() {
+                Ok(advisories) => {
+                    println!("{} {}", "Found vulnerabilities:".red(), advisories.len());
+                }
+                Err(e) => eprintln!("{} {}", "❌ JSON error:".red(), e),
+            }
+        }
+        Ok(response) => eprintln!("{} {}", "❌ API error:".red(), response.status()),
+        Err(e) => eprintln!("{} {}", "❌ Request failed:".red(), e),
     }
 }

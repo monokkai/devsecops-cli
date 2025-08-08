@@ -1,19 +1,20 @@
+use colored::Colorize;
 use std::process::Command;
 
-pub fn handle(args: cli::GitArgs) {
-    // Git commit
+use crate::cli::GitArgs;
+
+pub fn handle(args: GitArgs) {
     Command::new("git")
         .args(["commit", "-m", &args.message])
         .status()
-        .expect("Failed to run git");
+        .expect("Failed to execute git commit");
 
     if args.push {
-        // Git push
         Command::new("git")
             .arg("push")
             .status()
-            .expect("Ошибка git push");
+            .expect("Failed to execute git push");
     }
 
-    println!("✅ Success: commit + push (--push)");
+    println!("{}", "✅ Git operation completed".green());
 }
