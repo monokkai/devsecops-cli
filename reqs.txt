@@ -1,0 +1,3 @@
+cargo build --release - building
+sudo cp target/release/devsecops-cli /usr/local/bin/ - coping binary file
+devsecops-cli --help - checking
