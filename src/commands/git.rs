@@ -1,41 +1,66 @@
 use colored::Colorize;
-use std::process::Command;
+use std::process::{Command, Output};
 
 use crate::cli::GitArgs;
 
+fn execute_git_command(args: &[&str]) -> Result<Output, std::io::Error> {
+    Command::new("git").args(args).output()
+}
+
 pub fn handle(args: GitArgs) {
     if args.add {
-        let add_status = Command::new("git")
-            .args(["add", "."])
-            .status()
-            .expect("Failed to execute git add");
-
-        if !add_status.success() {
-            eprintln!("{}", "❌ Git add failed".red());
-            return;
+        match execute_git_command(&["add", "."]) {
+            Ok(output) if output.status.success() => {
+                println!("{}", "✓ Added all changes".green());
+            }
+            Ok(_) => {
+                eprintln!("{}", "❌ Git add failed".red());
+                return;
+            }
+            Err(e) => {
+                eprintln!("{} Failed to execute git add: {}", "❌".red(), e);
+                return;
+            }
         }
-        println!("{}", "✓ Added all changes".green());
     }
 
-    let commit_status = Command::new("git")
-        .args(["commit", "-m", &args.message])
-        .status()
-        .expect("Failed to execute git commit");
-
-    if !commit_status.success() {
-        eprintln!("{}", "❌ Git commit failed".red());
-        return;
+    let commit_output = execute_git_command(&["commit", "-m", &args.message]);
+    match commit_output {
+        Ok(output) if output.status.success() => {
+            println!("{}", "✓ Commit created successfully".green());
+        }
+        Ok(output) => {
+            let error_msg = String::from_utf8_lossy(&output.stderr);
+            if error_msg.contains("nothing to commit") {
+                println!("{} {}", "⚠️".yellow(), "Nothing to commit".yellow());
+            } else {
+                eprintln!("{} {}", "❌ Git commit failed:".red(), error_msg.red());
+            }
+            return;
+        }
+        Err(e) => {
+            eprintln!("{} Failed to execute git commit: {}", "❌".red(), e);
+            return;
+        }
     }
 
     if args.push {
-        let push_status = Command::new("git")
-            .arg("push")
-            .status()
-            .expect("Failed to execute git push");
-
-        if !push_status.success() {
-            eprintln!("{}", "❌ Git push failed".red());
-            return;
+        match execute_git_command(&["push"]) {
+            Ok(output) if output.status.success() => {
+                println!("{}", "✓ Pushed successfully".green());
+            }
+            Ok(output) => {
+                eprintln!(
+                    "{} {}",
+                    "❌ Git push failed:".red(),
+                    String::from_utf8_lossy(&output.stderr).red()
+                );
+                return;
+            }
+            Err(e) => {
+                eprintln!("{} Failed to execute git push: {}", "❌".red(), e);
+                return;
+            }
         }
     }
 
