@@ -3,55 +3,50 @@ use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
 pub fn handle(args: &crate::cli::LogArgs) {
-    let mut log_command = Command::new("git");
+    let log_format = format!(
+        "%C(auto)%h%Creset - %C(bold yellow)%an%Creset - %C(green)%s%Creset - %C(cyan)%ad%Creset"
+    );
 
-    log_command
+    let mut git_log = Command::new("git");
+
+    git_log
         .arg("log")
-        .arg("--pretty=format:%C(yellow)%h%Creset - %C(bold blue)%an%Creset : %s")
-        .arg("--date=short");
+        .arg("--pretty=format:".to_owned() + &log_format)
+        .arg("--date=format:%Y-%m-%d %H:%M")
+        .arg("--color=always");
 
     if args.compact {
-        log_command.arg("--oneline");
+        git_log.arg("--oneline");
     }
-
     if args.graph {
-        log_command.arg("--graph");
+        git_log.arg("--graph");
     }
-
     if let Some(limit) = args.limit {
-        log_command.arg(format!("-{}", limit));
+        git_log.arg(format!("-{}", limit));
     }
 
-    let child = log_command
+    let child = git_log
         .stdout(Stdio::piped())
         .spawn()
         .expect("Failed to execute git log");
 
-    let reader = BufReader::new(child.stdout.unwrap());
-
-    println!(
-        "{}",
-        "┌──────────────────────────────────────────────────────┐".bright_black()
-    );
-    println!(
-        "{}",
-        "│                   COMMIT HISTORY                      │"
-            .bright_blue()
-            .bold()
-    );
-    println!(
-        "{}",
-        "└──────────────────────────────────────────────────────┘".bright_black()
-    );
+    let reader = BufReader::new(child.stdout.expect("Failed to capture stdout"));
 
     for line in reader.lines() {
         if let Ok(line) = line {
-            if line.starts_with("* ") || line.starts_with("| ") {
-                // Graph
-                println!("{}", line.bright_black());
-            } else if let Some((hash, rest)) = line.split_once(" - ") {
-                // Default view
-                println!("{:<10} {}", hash, rest);
+            if line.is_empty() {
+                continue;
+            }
+
+            let parts: Vec<&str> = line.splitn(4, " - ").collect();
+            if parts.len() == 4 {
+                println!(
+                    "{:<10} {:<20} {:<50} {}",
+                    parts[0].red().bold(),
+                    parts[1].yellow(),
+                    parts[2].green(),
+                    parts[3].cyan()
+                );
             } else {
                 println!("{}", line);
             }
