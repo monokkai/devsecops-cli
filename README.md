@@ -53,5 +53,10 @@ monokkai log # Default history of commits
 monokkai log --graph -l 5 # The last 5 (for example)
 monokkai log --compact # Hash and message
 monokkai log --graph # With graph (for example if u're commiting with others)
+```
 
+# Http simple requests
+```zsh
+monokkai http --GET https://api.github.com/users/monokkai 
+monokkai http --POST https://api.example.com --body '{"key": "value"}'
 ```

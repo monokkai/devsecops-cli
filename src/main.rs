@@ -1,6 +1,6 @@
 mod cli;
-mod commands;
-// mod utils;
+mod modules;
+mod services;
 
 use crate::cli::{CliArgs, Commands};
 use clap::Parser;
@@ -9,10 +9,10 @@ fn main() {
     let args = CliArgs::parse();
 
     match args.command {
-        Commands::Git(args) => commands::git::handle(args),
-        Commands::Scan(args) => commands::scan::handle(args),
-        Commands::Docker(args) => commands::docker::handle(args),
-        Commands::Auth(args) => commands::auth::handle(args),
-        Commands::Log(args) => commands::log::handle(&args), 
+        Commands::Git(args) => modules::git::git::handle(args),
+        Commands::Scan(args) => modules::docker::scan::handle(args),
+        Commands::Docker(args) => modules::docker::docker::handle(args),
+        Commands::Auth(args) => services::auth::handle(args),
+        Commands::Log(args) => modules::git::log::handle(&args),
     }
 }

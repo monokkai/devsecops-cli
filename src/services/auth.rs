@@ -1,6 +1,6 @@
 use colored::Colorize;
 use jsonwebtoken::{Algorithm, DecodingKey, Validation, decode};
-use reqwest::Client; 
+use reqwest::Client;
 use serde_json::json;
 use tokio::runtime::Runtime;
 
