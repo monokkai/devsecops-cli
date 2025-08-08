@@ -27,6 +27,9 @@ pub struct GitArgs {
 
     #[arg(short, long, default_value_t = false)]
     pub push: bool,
+
+    #[arg(short, long, default_value_t = false)]
+    pub add: bool,
 }
 
 #[derive(Parser)]
