@@ -30,6 +30,12 @@ pub struct GitArgs {
 
     #[arg(short, long, default_value_t = false)]
     pub add: bool,
+
+    #[arg(short, long, default_value_t = false)]
+    pub pull: bool,
+
+    #[arg(short, long, default_value_t = false)]
+    pub rebase: bool,
 }
 
 #[derive(Parser)]

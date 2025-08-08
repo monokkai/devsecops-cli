@@ -47,4 +47,6 @@ monokkai auth github --token "ghp_yourtoken"  # Verify GitHub token
 # Git Automation
 monokkai git -m "commit message" [--push]  # Commit (and optionally push)
 monokkai git -a -m "My commit message" --push # Already contains 'git add .' flag
+monokkai git --pull --rebase -a -m "message" -p
+monokkai git --pull -m "message"
 ```

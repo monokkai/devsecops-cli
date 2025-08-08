@@ -91,5 +91,31 @@ pub fn handle(args: GitArgs) {
         }
     }
 
+    // Git pull / pull --rebase
+    if args.pull || args.rebase {
+        let pull_type = if args.rebase { "--rebase" } else { "" };
+        match execute_git_command(&["pull", pull_type]) {
+            Ok(output) if output.status.success() => {
+                println!(
+                    "{} {}",
+                    "✅ Pull successful:".green(),
+                    String::from_utf8_lossy(&output.stdout).trim()
+                );
+            }
+            Ok(output) => {
+                eprintln!(
+                    "{} {}",
+                    "❌ Pull failed:".red(),
+                    String::from_utf8_lossy(&output.stderr).trim()
+                );
+                return;
+            }
+            Err(e) => {
+                eprintln!("{} Failed to execute git pull: {}", "❌".red(), e);
+                return;
+            }
+        }
+    }
+
     println!("{}", "🎉 All operations completed successfully".green());
 }
