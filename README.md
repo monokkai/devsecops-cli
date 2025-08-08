@@ -50,5 +50,8 @@ monokkai git -a -m "My commit message" --push # Already contains 'git add .' fla
 monokkai git --pull --rebase -a -m "message" -p
 monokkai git --pull -m "message"
 monokkai log # Default history of commits
-monokkai log --graph -l 5 # The last 5 for example
+monokkai log --graph -l 5 # The last 5 (for example)
+monokkai log --compact # Hash and message
+monokkai log --graph # With graph (for example if u're commiting with others)
+
 ```
