@@ -13,8 +13,8 @@ pub struct AppConfig {
     pub modules: HashMap<String, ModuleConfig>,
 }
 
-impl AppConfig {
-    pub fn load() -> Self {
-        // Loading from ... config.toml + env vars
-    }
-}
+// impl AppConfig {
+//     pub fn load() -> Self {
+//         // Loading from ... config.toml + env vars
+//     }
+// }

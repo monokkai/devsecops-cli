@@ -10,16 +10,12 @@ pub struct CliArgs {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Git operations
     Git(GitArgs),
-    /// Security scanning
     Scan(ScanArgs),
-    /// Docker operations
     Docker(DockerArgs),
-    /// Authentication
     Auth(AuthArgs),
-    /// Git Logs
     Log(LogArgs),
+    Http(HttpArgs),
 }
 
 #[derive(Parser)]
@@ -54,15 +50,12 @@ pub struct DockerArgs {
 
 #[derive(Parser)]
 pub struct LogArgs {
-    /// Show compact log
     #[arg(short, long, default_value_t = false)]
     pub compact: bool,
 
-    /// Limit number of commits
     #[arg(short, long)]
     pub limit: Option<usize>,
 
-    /// Show graph view
     #[arg(short, long, default_value_t = false)]
     pub graph: bool,
 }
@@ -83,4 +76,55 @@ pub struct AuthArgs {
 pub enum AuthAction {
     Jwt { token: String },
     Github { token: String },
+}
+
+#[derive(Parser)]
+pub struct HttpArgs {
+    #[command(subcommand)]
+    pub action: HttpAction,
+}
+
+#[derive(Subcommand)]
+pub enum HttpAction {
+    Get {
+        url: String,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
+    Post {
+        url: String,
+        #[arg(short, long)]
+        body: Option<String>,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
+    Put {
+        url: String,
+        #[arg(short, long)]
+        body: Option<String>,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
+    Patch {
+        url: String,
+        #[arg(short, long)]
+        body: Option<String>,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
+    Delete {
+        url: String,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
+    Head {
+        url: String,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
+    Options {
+        url: String,
+        #[arg(short, long)]
+        headers: Vec<String>,
+    },
 }

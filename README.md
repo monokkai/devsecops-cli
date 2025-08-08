@@ -4,7 +4,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Version](https://img.shields.io/badge/version-0.1.0-orange)
 
-A Swiss Army knife for modern DevSecOps workflows, combining security scanning, container management, and automation in one fast Rust-powered CLI.
+A Swiss Army knife for modern DevSecOps workflows, combining security scanning, container management, and automation in
+one fast Rust-powered CLI.
 
 ## 🚀 Features
 
@@ -26,6 +27,7 @@ A Swiss Army knife for modern DevSecOps workflows, combining security scanning, 
 ## 📦 Installation
 
 ### From Source
+
 ```bash
 cargo install --path .
 ```
@@ -56,7 +58,10 @@ monokkai log --graph # With graph (for example if u're commiting with others)
 ```
 
 # Http simple requests
-```zsh
-monokkai http --GET https://api.github.com/users/monokkai 
-monokkai http --POST https://api.example.com --body '{"key": "value"}'
+
+```zsh 
+monokkai http get https://github.com/monokkai
+monokkai http delete https://api.example.com/resource/1 --headers "Authorization: Bearer token"
+monokkai http head https://api.example.com --headers "Accept: application/json"
+monokkai http options https://api.example.com
 ```
