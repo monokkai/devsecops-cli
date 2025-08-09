@@ -13,7 +13,6 @@ fn is_commit_successful(output: &Output) -> bool {
 }
 
 pub fn handle(args: GitArgs) {
-    // Git add
     if args.add {
         match execute_git_command(&["add", "."]) {
             Ok(output) if output.status.success() => {
@@ -30,7 +29,6 @@ pub fn handle(args: GitArgs) {
         }
     }
 
-    // Git commit
     let commit_output = execute_git_command(&["commit", "-m", &args.message]);
     match commit_output {
         Ok(output) if is_commit_successful(&output) => {
@@ -60,7 +58,6 @@ pub fn handle(args: GitArgs) {
         }
     }
 
-    // Git push
     if args.push {
         match execute_git_command(&["push"]) {
             Ok(output) if output.status.success() => {
@@ -91,7 +88,6 @@ pub fn handle(args: GitArgs) {
         }
     }
 
-    // Git pull / pull --rebase
     if args.pull || args.rebase {
         let pull_type = if args.rebase { "--rebase" } else { "" };
         match execute_git_command(&["pull", pull_type]) {
