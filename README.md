@@ -10,19 +10,21 @@ one fast Rust-powered CLI.
 ## 🚀 Features
 
 - **Security First**:
-    - Code vulnerability scanning
-    - JWT/GitHub token validation
-    - Docker image security audits
+
+  - Code vulnerability scanning
+  - JWT/GitHub token validation
+  - Docker image security audits
 
 - **DevOps Automation**:
-    - Smart Git workflows
-    - Docker build/push pipelines
-    - CI/CD ready architecture
+
+  - Smart Git workflows
+  - Docker build/push pipelines
+  - CI/CD ready architecture
 
 - **Enterprise Ready**:
-    - Async I/O where it matters
-    - Proper error handling
-    - Configurable via ENV
+  - Async I/O where it matters
+  - Proper error handling
+  - Configurable via ENV
 
 ## 📦 Installation
 
@@ -66,8 +68,9 @@ monokkai git cz --pull # with pull
 
 # Http simple requests
 
-```zsh 
+```zsh
 monokkai http get https://github.com/monokkai
+monokkai http get https://example.com
 monokkai http delete https://api.example.com/resource/1 --headers "Authorization: Bearer token"
 monokkai http head https://api.example.com --headers "Accept: application/json"
 monokkai http options https://api.example.com
