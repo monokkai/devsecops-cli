@@ -35,8 +35,25 @@ pub struct GitArgs {
     #[arg(short, long, default_value_t = false)]
     pub rebase: bool,
 
-    #[arg(short = 'z', long, default_value_t = false)]
-    pub cz: bool,
+    #[command(subcommand)]
+    pub subcommand: Option<GitSubcommand>,
+}
+
+#[derive(Subcommand)]
+pub enum GitSubcommand {
+    Cz {
+        #[arg(short, long, default_value_t = false)]
+        add: bool,
+
+        #[arg(short, long, default_value_t = false)]
+        push: bool,
+
+        #[arg(short, long, default_value_t = false)]
+        pull: bool,
+
+        #[arg(short, long, default_value_t = false)]
+        rebase: bool,
+    },
 }
 
 #[derive(Parser)]

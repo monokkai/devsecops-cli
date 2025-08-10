@@ -1,4 +1,4 @@
-use crate::cli::GitArgs;
+use crate::cli::{GitArgs, GitSubcommand};
 use colored::*;
 use dialoguer::{
     Confirm, Input, Select,
@@ -310,8 +310,13 @@ impl CommitHelper {
 }
 
 pub fn handle(args: GitArgs) {
-    let commit_message = if args.cz {
-        match CommitHelper::interactive_commit() {
+    let commit_message = match args.subcommand {
+        Some(GitSubcommand::Cz {
+            add,
+            push,
+            pull,
+            rebase,
+        }) => match CommitHelper::interactive_commit() {
             Ok(msg) => {
                 println!("\n{} Commit message:\n{}", "✏️".cyan(), msg.cyan());
                 msg
@@ -320,15 +325,11 @@ pub fn handle(args: GitArgs) {
                 eprintln!("{} Failed to get commit message: {}", "❌".red(), e);
                 return;
             }
-        }
-    } else {
-        args.message.unwrap_or_else(|| {
-            eprintln!(
-                "{} Commit message is required unless using -z/--cz",
-                "❌".red()
-            );
+        },
+        None => args.message.unwrap_or_else(|| {
+            eprintln!("{} Commit message is required", "❌".red());
             std::process::exit(1);
-        })
+        }),
     };
 
     let (modified, added, deleted) = match GitHelper::get_changed_files() {
@@ -339,7 +340,7 @@ pub fn handle(args: GitArgs) {
         }
     };
 
-    if args.add || args.cz {
+    if args.add || matches!(args.subcommand, Some(GitSubcommand::Cz { add: true, .. })) {
         if let Err(e) = GitHelper::add_changes() {
             eprintln!("{}", e);
             return;
@@ -353,14 +354,17 @@ pub fn handle(args: GitArgs) {
         return;
     }
 
-    if args.push || (args.cz && args.push) {
+    if args.push || matches!(args.subcommand, Some(GitSubcommand::Cz { push: true, .. })) {
         if let Err(e) = GitHelper::push_changes() {
             eprintln!("{}", e);
             return;
         }
     }
 
-    if args.pull || args.rebase {
+    if args.pull
+        || args.rebase
+        || matches!(args.subcommand, Some(GitSubcommand::Cz { pull: true, .. }))
+    {
         if let Err(e) = GitHelper::pull_changes(args.rebase) {
             eprintln!("{}", e);
             return;
