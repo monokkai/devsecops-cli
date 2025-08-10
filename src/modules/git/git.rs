@@ -6,31 +6,45 @@ use dialoguer::{
 };
 use std::process::{Command, Output};
 
-const COMMIT_TYPES: &[(&str, &str, Color)] = &[
-    ("✨feat", "A new feature", Color::BrightGreen),
-    ("🐛fix", "A bug fix", Color::BrightRed),
-    ("📚docs", "Documentation only changes", Color::BrightBlue),
+const COMMIT_TYPES: &[(&str, &str, Color, &str)] = &[
+    ("feat", "A new feature", Color::BrightGreen, "✨"),
+    ("fix", "A bug fix", Color::BrightRed, "🐛"),
     (
-        "🎨style",
+        "docs",
+        "Documentation only changes",
+        Color::BrightBlue,
+        "📚",
+    ),
+    (
+        "style",
         "Changes that do not affect meaning",
         Color::BrightMagenta,
+        "🎨",
     ),
     (
-        "♻️refactor",
+        "refactor",
         "A code change that neither fixes a bug nor adds a feature",
         Color::BrightCyan,
+        "♻️",
     ),
     (
-        "⚡️perf",
+        "perf",
         "A code change that improves performance",
         Color::BrightYellow,
+        "⚡️",
     ),
     (
-        "✅test",
+        "test",
         "Adding missing or correcting tests",
         Color::BrightWhite,
+        "✅",
     ),
-    ("🔧chore", "Changes to build process or tools", Color::White),
+    (
+        "chore",
+        "Changes to build process or tools",
+        Color::White,
+        "🔧",
+    ),
 ];
 
 struct GitHelper;
@@ -47,7 +61,7 @@ impl GitHelper {
 
     fn get_changed_files() -> Result<(Vec<String>, Vec<String>, Vec<String>), std::io::Error> {
         let output = Command::new("git")
-            .args(&["status", "--porcelain"])
+            .args(&["status", " - - porcelain"])
             .output()?;
         let status = String::from_utf8_lossy(&output.stdout);
 
@@ -74,21 +88,21 @@ impl GitHelper {
 
     fn print_changes(modified: &[String], added: &[String], deleted: &[String]) {
         if !modified.is_empty() {
-            println!("\n{} {}:", "↻".yellow(), "Modified files".yellow());
+            println!("\n{} {}: ", "↻".yellow(), "Modified files".yellow());
             for file in modified {
                 println!("  {}", file.yellow());
             }
         }
 
         if !added.is_empty() {
-            println!("\n{} {}:", "+".green(), "Added files".green());
+            println!("\n{} {}: ", " + ".green(), "Added files".green());
             for file in added {
                 println!("  {}", file.green());
             }
         }
 
         if !deleted.is_empty() {
-            println!("\n{} {}:", "-".red(), "Deleted files".red());
+            println!("\n{} {}: ", " - ".red(), "Deleted files".red());
             for file in deleted {
                 println!("  {}", file.red());
             }
@@ -110,7 +124,7 @@ impl GitHelper {
     }
 
     fn create_commit(message: &str) -> Result<(), String> {
-        let commit_output = Self::execute_git_command(&["commit", "-m", message]);
+        let commit_output = Self::execute_git_command(&["commit", " - m", message]);
 
         match commit_output {
             Ok(output) if Self::is_commit_successful(&output) => {
@@ -157,7 +171,7 @@ impl GitHelper {
                         "Push rejected - remote has new changes".yellow()
                     );
                     println!("{} Try running:", "💡".blue());
-                    println!("  git pull --rebase");
+                    println!("  git pull - - rebase");
                     println!("Then push again with:");
                     println!("  monokkai git -a -m \"your message\" -p");
                     Err("Push rejected".to_string())
