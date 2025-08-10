@@ -214,7 +214,7 @@ impl CommitHelper {
     fn select_commit_type(theme: &dyn Theme) -> Result<(&'static str, Color), std::io::Error> {
         let items = COMMIT_TYPES
             .iter()
-            .map(|(t, d, c)| format!("{}: {}", t.color(*c), d))
+            .map(|(t, d, c, _emoji)| format!("{}: {}", t.color(*c), d))
             .collect::<Vec<_>>();
 
         let selection = Select::with_theme(theme)
@@ -332,7 +332,7 @@ pub fn handle(args: GitArgs) {
             rebase,
         }) => match CommitHelper::interactive_commit() {
             Ok(msg) => {
-                println!("\n{} Commit message:\n{}", "✏️".cyan(), msg.cyan());
+                println!("\n{} Commit message:\n{}", "✏️".cyan(), msg);
                 msg
             }
             Err(e) => {
