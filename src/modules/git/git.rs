@@ -7,30 +7,30 @@ use dialoguer::{
 use std::process::{Command, Output};
 
 const COMMIT_TYPES: &[(&str, &str, Color)] = &[
-    ("feat", "A new feature", Color::BrightGreen),
-    ("fix", "A bug fix", Color::BrightRed),
-    ("docs", "Documentation only changes", Color::BrightBlue),
+    ("✨feat", "A new feature", Color::BrightGreen),
+    ("🐛fix", "A bug fix", Color::BrightRed),
+    ("📚docs", "Documentation only changes", Color::BrightBlue),
     (
-        "style",
+        "🎨style",
         "Changes that do not affect meaning",
         Color::BrightMagenta,
     ),
     (
-        "refactor",
+        "♻️refactor",
         "A code change that neither fixes a bug nor adds a feature",
         Color::BrightCyan,
     ),
     (
-        "perf",
+        "⚡️perf",
         "A code change that improves performance",
         Color::BrightYellow,
     ),
     (
-        "test",
+        "✅test",
         "Adding missing or correcting tests",
         Color::BrightWhite,
     ),
-    ("chore", "Changes to build process or tools", Color::White),
+    ("🔧chore", "Changes to build process or tools", Color::White),
 ];
 
 struct GitHelper;
