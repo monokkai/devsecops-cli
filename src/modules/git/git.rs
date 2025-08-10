@@ -269,7 +269,7 @@ impl CommitHelper {
         long_desc: &str,
         breaking: bool,
     ) -> String {
-        let type_part = format!("{}", commit_type).color(type_color).to_string();
+        let type_part = commit_type.color(type_color).to_string();
 
         let mut message = if scope.is_empty() {
             format!("{}: {}", type_part, short_desc)
@@ -282,7 +282,7 @@ impl CommitHelper {
         }
 
         if breaking {
-            message.push_str("\n\nBREAKING CHANGE: ");
+            message.push_str(&format!("\n\n{}", "BREAKING CHANGE:".bright_red()));
         }
 
         message
