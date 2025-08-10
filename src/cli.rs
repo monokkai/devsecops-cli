@@ -21,7 +21,7 @@ pub enum Commands {
 #[derive(Parser)]
 pub struct GitArgs {
     #[arg(short, long)]
-    pub message: String,
+    pub message: Option<String>,
 
     #[arg(short, long, default_value_t = false)]
     pub push: bool,
@@ -34,6 +34,9 @@ pub struct GitArgs {
 
     #[arg(short, long, default_value_t = false)]
     pub rebase: bool,
+
+    #[arg(short = 'z', long, default_value_t = false)]
+    pub cz: bool,
 }
 
 #[derive(Parser)]

@@ -55,6 +55,12 @@ monokkai log # Default history of commits
 monokkai log --graph -l 5 # The last 5 (for example)
 monokkai log --compact # Hash and message
 monokkai log --graph # With graph (for example if u're commiting with others)
+
+# Git CLI like commitizen interface
+monokkai git cz # Basic commit
+monokkai git cz -a -p # With git add . and git push
+monokkai git cz -a # only commit
+monokkai git cz --pull # with pull
 ```
 
 # Http simple requests
