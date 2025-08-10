@@ -57,6 +57,7 @@ monokkai log --compact # Hash and message
 monokkai log --graph # With graph (for example if u're commiting with others)
 
 # Git CLI like commitizen interface
+# This git line tool only made for make work easier and won't gonna be sold or paid!
 monokkai git cz # Basic commit
 monokkai git cz -a -p # With git add . and git push
 monokkai git cz -a # only commit

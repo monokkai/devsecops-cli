@@ -6,47 +6,46 @@ use dialoguer::{
 };
 use std::process::{Command, Output};
 
-const COMMIT_TYPES: &[(&str, &str, Color, &str)] = &[
-    ("feat", "A new feature", Color::BrightGreen, "✨"),
-    ("fix", "A bug fix", Color::BrightRed, "🐛"),
-    (
-        "docs",
-        "Documentation only changes",
-        Color::BrightBlue,
-        "📚",
-    ),
+const COMMIT_TYPES: &[(&str, &str, Color)] = &[
+    ("feat", "A new feature", Color::BrightGreen),
+    ("fix", "A bug fix", Color::BrightRed),
+    ("docs", "Documentation changes", Color::BrightBlue),
     (
         "style",
-        "Changes that do not affect meaning",
+        "Changes that do not affect the meaning of the code",
         Color::BrightMagenta,
-        "🎨",
     ),
     (
         "refactor",
         "A code change that neither fixes a bug nor adds a feature",
         Color::BrightCyan,
-        "♻️",
     ),
     (
         "perf",
         "A code change that improves performance",
         Color::BrightYellow,
-        "⚡️",
     ),
     (
         "test",
-        "Adding missing or correcting tests",
+        "Adding missing tests or correcting existing tests",
         Color::BrightWhite,
-        "✅",
     ),
     (
         "chore",
-        "Changes to build process or tools",
-        Color::White,
-        "🔧",
+        "Other changes that don’t modify src or test files",
+        Color::BrightBlack,
+    ),
+    (
+        "build",
+        "Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+        Color::BrightBlue,
+    ),
+    (
+        "ci",
+        "Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
+        Color::BrightMagenta,
     ),
 ];
-
 struct GitHelper;
 
 impl GitHelper {
@@ -214,7 +213,7 @@ impl CommitHelper {
     fn select_commit_type(theme: &dyn Theme) -> Result<(&'static str, Color), std::io::Error> {
         let items = COMMIT_TYPES
             .iter()
-            .map(|(t, d, c, _emoji)| format!("{}: {}", t.color(*c), d))
+            .map(|(t, d, c)| format!("{} {}:", t.color(*c), d))
             .collect::<Vec<_>>();
 
         let selection = Select::with_theme(theme)
