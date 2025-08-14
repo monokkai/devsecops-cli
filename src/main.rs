@@ -1,8 +1,8 @@
 mod cli;
 mod core;
+mod image;
 mod modules;
 mod services;
-mod image;
 
 use clap::Parser;
 use std::error::Error;
@@ -18,7 +18,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         cli::Commands::Auth(args) => services::auth::handle(args),
         cli::Commands::Log(args) => modules::git::log::handle(&args),
         cli::Commands::Http(args) => modules::http::handler::handle(args.action).await?,
-        cli::Commands::Image(args) => modules::image::image::handle(args),
     }
 
     Ok(())
