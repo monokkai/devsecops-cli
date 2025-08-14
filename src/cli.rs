@@ -16,6 +16,22 @@ pub enum Commands {
     Auth(AuthArgs),
     Log(LogArgs),
     Http(HttpArgs),
+    Image(ImageArgs),
+}
+
+#[derive(Parser)]
+pub struct ImageArgs {
+    #[command(subcommand)]
+    pub action: ImageAction,
+}
+
+#[derive(Subcommand)]
+pub enum ImageAction {
+    Extract {
+        path: String,
+        #[arg(short, long, default_value_t = false)]
+        all: bool,
+    },
 }
 
 #[derive(Parser)]
